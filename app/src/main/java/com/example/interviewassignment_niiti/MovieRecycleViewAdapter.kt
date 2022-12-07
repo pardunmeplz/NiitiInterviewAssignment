@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONArray
 import org.json.JSONObject
@@ -43,7 +42,7 @@ class MovieRecycleViewAdapter(private val context:Context, private val dataList:
             val cardView : CardView = itemView.findViewById(R.id.itemCardView)
             cardView.setOnClickListener {
                 if (cardData == null ){return@setOnClickListener}
-                val displayIntent : Intent = Intent(context,DetailsActivity().javaClass)
+                val displayIntent = Intent(context,DetailsActivity().javaClass)
                 displayIntent.putExtra("data", cardData.toString())
                 context.startActivity(displayIntent)
             }

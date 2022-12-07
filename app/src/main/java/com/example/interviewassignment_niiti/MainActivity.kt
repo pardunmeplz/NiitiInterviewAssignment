@@ -1,7 +1,5 @@
 package com.example.interviewassignment_niiti
 
-
-import android.app.Activity
 import android.app.AppOpsManager
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
@@ -28,11 +26,8 @@ import org.json.JSONTokener
 import java.lang.Exception
 import java.net.URL
 import android.app.ActivityManager
-import android.app.ActivityManager.RunningAppProcessInfo
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.util.Log
-import java.util.jar.Attributes
 
 
 class MainActivity : AppCompatActivity() {
@@ -62,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val reloadButton:Button = findViewById<Button>(R.id.reloadButton)
+        val reloadButton:Button = findViewById(R.id.reloadButton)
         reloadButton.setOnClickListener{
             doAsync {  loadList(it) }
         }
@@ -73,28 +68,23 @@ class MainActivity : AppCompatActivity() {
             reloadButton.isVisible = true
         }else doAsync {loadList(reloadButton)}
 
-        // TODO : get the recently closed app
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         if ( checkUsageStatsPermission() ) {
-            var packageName:String = ""
+            var packageName = "N/A"
             val usageStatsManager = this.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-            val pm = this.packageManager
             val currTime = System.currentTimeMillis()
             val usageEvents = usageStatsManager.queryEvents( currTime - (1000*60*10) , currTime ) as UsageEvents
             val event = UsageEvents.Event()
+            val list = getNonSystemAppsList()
             while(usageEvents.hasNextEvent()) {
                 usageEvents.getNextEvent(event)
-                if (pm.getApplicationLabel(appInfo).toString() in packageName){continue}
-                packageName += pm.getApplicationLabel(appInfo).toString()
-                continue
-                if(isAppStopped(this,event.packageName)) {
-                    try{
-                        val appInfo = pm.getApplicationInfo(event.packageName,PackageManager.GET_META_DATA)
-
-                        if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0){
-
-                            //packageName = pm.getApplicationLabel(appInfo).toString()
-                        }
-                    } catch (e:Exception){ }
+                if (event.packageName in list && isAppStopped(this,event.packageName))
+                {
+                    packageName = list[event.packageName].toString()
                 }
             }
             findViewById<TextView>(R.id.lastClosedApp).text = packageName
@@ -105,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity( this )
             }
         }
-
     }
 
     private fun checkUsageStatsPermission() : Boolean {
@@ -127,15 +116,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun isAppStopped(context: Context, packageName: String): Boolean {
         val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        val procInfos = activityManager.runningAppProcesses
-        if (procInfos != null) {
-            for (processInfo in procInfos) {
+        val procList = activityManager.runningAppProcesses
+        if (procList != null) {
+            for (processInfo in procList) {
                 if (processInfo.processName == packageName) {
                     return false
                 }
             }
         }
         return true
+    }
+
+    private fun getNonSystemAppsList() : Map<String,String> {
+        val appList = packageManager.getInstalledApplications( PackageManager.GET_META_DATA )
+        val appInfoMap = HashMap<String,String>()
+        for ( appInfo in appList ) {
+            if ( appInfo.flags != ApplicationInfo.FLAG_SYSTEM ) {
+                appInfoMap[ appInfo.packageName ]= packageManager.getApplicationLabel( appInfo ).toString()
+            }
+        }
+        return appInfoMap
     }
 
     private fun getData(): JSONArray? {

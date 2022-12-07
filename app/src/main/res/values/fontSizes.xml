@@ -1,0 +1,9 @@
+<resources>
+    <string name="font14">14sp</string>
+    <string name="font18">18sp</string>
+    <string name="font20">20sp</string>
+    <string name="font24">24sp</string>
+    <string name="font28">28sp</string>
+    <string name="font40">40sp</string>
+    <string name="font48">48sp</string>
+</resources>

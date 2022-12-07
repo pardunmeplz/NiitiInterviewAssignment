@@ -49,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/lastClosedApp"
                         android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
+                        android:textSize="48sp" />
                 </LinearLayout>
             </ScrollView>
 
@@ -82,12 +82,12 @@
         android:id="@+id/reloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="#97333333"
+        android:padding="10dp"
         android:text="@string/reload"
+        android:textColor="@color/white"
         android:textSize="20sp"
         android:visibility="visible"
-        android:textColor="@color/white"
-        android:backgroundTint = "#97333333"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/movieRecyclerView"
         app:layout_constraintEnd_toEndOf="@+id/movieRecyclerView"
         app:layout_constraintStart_toStartOf="@+id/movieRecyclerView"
