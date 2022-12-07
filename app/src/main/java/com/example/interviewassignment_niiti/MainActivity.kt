@@ -73,27 +73,33 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if ( checkUsageStatsPermission() ) {
+        findViewById<TextView>(R.id.lastClosedApp).text = resources.getString(R.string.loading)
+        doAsync {
+            if (!checkUsageStatsPermission()) {
+                // Navigate the user to the permission settings
+                Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                    startActivity(this)
+                }
+            }
+
             var packageName = "N/A"
-            val usageStatsManager = this.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+            val usageStatsManager =
+                this@MainActivity.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
             val currTime = System.currentTimeMillis()
-            val usageEvents = usageStatsManager.queryEvents( currTime - (1000*60*10) , currTime ) as UsageEvents
+            val usageEvents = usageStatsManager.queryEvents(
+                currTime - (1000 * 60 * 10),
+                currTime
+            ) as UsageEvents
             val event = UsageEvents.Event()
             val list = getNonSystemAppsList()
-            while(usageEvents.hasNextEvent()) {
+            while (usageEvents.hasNextEvent()) {
                 usageEvents.getNextEvent(event)
-                if (event.packageName in list && isAppStopped(this,event.packageName))
-                {
+                if (event.packageName in list && isAppStopped(this@MainActivity, event.packageName)) {
                     packageName = list[event.packageName].toString()
                 }
             }
-            findViewById<TextView>(R.id.lastClosedApp).text = packageName
-        }
-        else {
-            // Navigate the user to the permission settings
-            Intent( Settings.ACTION_USAGE_ACCESS_SETTINGS ).apply {
-                startActivity( this )
-            }
+            runOnUiThread{findViewById<TextView>(R.id.lastClosedApp).text = packageName}
+
         }
     }
 
