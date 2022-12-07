@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Hello Android</string>
+    <string name="button">Button</string>
+    <string name="hello_android">Hello Android</string>
+    <string name="counter">0</string>
+    <string name="lastClosedApp">N/A</string>
+    <string name="cardTitle">Last Closed App</string>
+    <string name="poster">Poster</string>
+    <string name="date">Date</string>
+    <string name="title">Title</string>
+    <string name="ratingTitle">"imdbRating : %s" </string>
+    <string name="dateTitle">"Release Date : %s"</string>
+    <string name="reload">reload</string>
+</resources>
